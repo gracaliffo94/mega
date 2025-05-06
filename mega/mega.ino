@@ -21,9 +21,9 @@
 #define LEFT_LED_PIN 13
 #define ON_RIGHT_WALL_DISTANCE 0.125
 #define KP 0.37
-#define KD 4
+#define KD 3
 #define RIGHT_BASE_SPEED 150
-#define LEFT_BASE_SPEED RIGHT_BASE_SPEED-30
+#define LEFT_BASE_SPEED RIGHT_BASE_SPEED+15
 #define ROTATION_SPEED 120
 #define MAX_TURN_SPEED 150
 #define FRONT_CM_DISTANCE_OBSTACLE_AVOIDANCE_THRESHOLD 15
@@ -230,13 +230,13 @@ void moveForward(){
  
  
 bool checkFrontObstacle(){
-  if (frontDistance()<FRONT_CM_DISTANCE_OBSTACLE_AVOIDANCE_THRESHOLD)
-    return true;
-  bool left_obstacle = 1-digitalRead(LEFT_LED_PIN);
-  bool right_obstacle = 1-digitalRead(RIGHT_LED_PIN);
+ // if (frontDistance()<FRONT_CM_DISTANCE_OBSTACLE_AVOIDANCE_THRESHOLD)
+ // return true;
+  //bool left_obstacle = 1-digitalRead(LEFT_LED_PIN);
+  //bool right_obstacle = 1-digitalRead(RIGHT_LED_PIN);
   bool front_left_obstacle = 1-digitalRead(FRONT_LEFT_LED_PIN);
   bool front_right_obstacle = 1-digitalRead(FRONT_RIGHT_LED_PIN);
-  return left_obstacle || right_obstacle || front_left_obstacle || front_right_obstacle;
+  return front_left_obstacle || front_right_obstacle; // || left_obstacle || right_obstacle;
 }
  
 void rotateLeft(short int speed){
@@ -360,6 +360,8 @@ void visualDebugTof(Distance d){
  
  
 void loop() {
+  moveForward();
+  return;
   if (millis() > 60000 && firstminute == false) // (millis() > timeRotate)
   {
     // timeRotate = timeRotate * 2
@@ -405,7 +407,7 @@ void loop() {
       rotateLeft(ROTATION_SPEED);
       lastState = 0;
     }else if (d.front>300 && d.rear>300){
-      Serial.print("STATE ROTATE_RIGHT ");
+      Serial.print("STATE FORWARD ");
       digitalWrite(ROTATE_LEFT_LED_PIN,LOW);
       digitalWrite(TURN_RIGHT_LED_PIN,LOW);
       digitalWrite(MOVE_FORWARD_LED_PIN,HIGH);
